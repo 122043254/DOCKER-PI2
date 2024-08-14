@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Descubre los mejores lugares para visitar y alojarte en Querétaro." />
+    <meta name="author" content="Equipo QuerétaroDescubre" />
+    <title>QuerétaroDescubre</title>
+    <link rel="icon" type="image/x-icon" href="/static/assets/favicon.ico" />
+    <!-- Font Awesome icons (free version) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-OHfK6HkDkPjFjIFie3ip7XhzJ8RW4coWo6vUYKtAN5xYJ5uVYPqSxwO/Pk6IHb/KDdzpXoX9Rz6K0W1i6iTj8w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+    <!-- Core theme CSS (includes Bootstrap) -->
+    <link href="/static/css/styles.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .container h5 {
+            margin-bottom: 20px;
+            font-size: 35px;
+            color: #ffffff;
+            font-family: 'Pacifico', cursive;
+        }
+        /*#hoteles-content {
+            display: none;
+        }*/
+        .icon-green {
+            color: #28a745;
+        }
+        .icon-red {
+            color: #dc3545;
+        }
+        .hotel-card {
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .hotel-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .hotel-card .content {
+            padding: 20px;
+        }
+        .hotel-card .content p {
+            margin: 0;
+        }
+        .hotel-card .footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            border-top: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+        <div class="container px-4 px-lg-5">
+            <a class="navbar-brand" href="/templates/index.html"><h5>QuerétaroDescubre</h5></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                Menu
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/about">Actividades</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/contact">Comentarios</a></li>
+                    {% if session.get('user_id') %}
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/logout">Cerrar sesión</a></li>
+                    {% else %}
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/login">Iniciar sesión</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/register">Registrarse</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('../static/assets/img/post-bg.jpg'); background-size: cover; background-position: center;">
+        <div class="container position-relative px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <div class="page-heading">
+                        <h1>Estadía</h1>
+                        <span class="subheading">Te presentamos algunas opciones de lugares en los cuales puedes alojarte</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- City Select -->
+    <section class="container px-4 px-lg-5 mt-5">
+        <div class="mb-4">
+            <label for="city-select" class="block text-gray-700 text-sm font-bold mb-2">Selecciona un lugar y descubre algunos lugares en los cuales podrás alojarte:</label>
+            <select id="city-select" class="block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
+                <option value="default">Selecciona un lugar</option>
+                {% for place in places %}
+                    <option value="{{ place[0] }}">{{ place[1] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <!-- Content blocks for each city -->
+        <div id="hoteles-content">
+            <!-- La información de los hoteles se cargará aquí -->
+        </div>
+        <script>
+            document.getElementById('city-select').addEventListener('change', function() {
+                var idDestino = this.value;
+                if (idDestino === 'default') {
+                    document.getElementById('hoteles-content').innerHTML = '';
+                    return;
+                }
+                fetch(`/hoteles?id_destino=${idDestino}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        var content = '';
+                        data.forEach(hotel => {
+                            content += `
+                                <div class="hotel-card" onclick="window.location.href='${hotel.url_pagina}'">
+                                    <div style="background-image: url('${hotel.url_img}'); background-size: cover; background-position: center; height: 200px;"></div>
+                                    <div class="content">
+                                        <p class="text-3xl text-gray-900">${hotel.nombre_hotel}</p>
+                                        <p class="text-gray-700">${hotel.descripcion}</p>
+                                    </div>
+                                    <div class="footer text-gray-700">
+                                        ${hotel.dato1 ? `
+                                            <div class="flex-1 inline-flex items-center">
+                                                <i class="fas fa-leaf icon-green h-6 w-6 mr-3"></i>
+                                                <span>${hotel.dato1}</span>
+                                            </div>
+                                        ` : ''}
+                                        ${hotel.dato2 ? `
+                                            <div class="flex-1 inline-flex items-center justify-end">
+                                                <i class="fas fa-smoking-ban icon-red h-6 w-6 mr-3"></i>
+                                                <span>${hotel.dato2}</span>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        document.getElementById('hoteles-content').innerHTML = content;
+                    });
+            });
+        </script>
+    </section>
+    <!-- Footer -->
+    <footer class="border-top">
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <ul class="list-inline text-center">
+                        <li class="list-inline-item">
+                            <a href="#!">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="#!">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-facebook-f fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="#!">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="small text-center text-muted fst-italic">Copyright &copy; Your Website 2023</div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js" integrity="sha512-Gdu1CieqazIm6m65V7tBq5D7He0btRglurC2ftjWV8phbg65PfHLiYXJ3l0dF5RYW0B4w0WmquVGsBnxRt7Erg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/static/js/scripts.js"></script>
+</body>
+</html>

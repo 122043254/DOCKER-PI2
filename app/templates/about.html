@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        .container h4 {
+            margin-bottom: 20px;
+            font-size: 35px;
+            color: #ffffff;
+            font-family: 'Pacifico', cursive;
+        }
+
+        .container h5 {
+            margin-bottom: 5px;
+            font-size: 20px;
+            color: #ffffff;
+            font-family: 'Pacifico', cursive;
+        }
+
+        .card-img-top {
+            object-fit: cover;
+            height: 200px;
+        }
+
+        .card-deck {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            margin: 0;
+            padding: 0;
+        }
+
+        .card {
+            margin: 0;
+            flex: 1 0 55%;
+            box-sizing: border-box;
+        }
+
+        .activity {
+            text-align: left;
+        }
+
+        .activity img {
+            max-width: 100%;
+            height: auto;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+
+.activity h3 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.activity p {
+    margin: 5px 0;
+}
+
+    </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>QuerétaroDescubre</title>
+    <link rel="icon" type="image/x-icon" href="/static/assets/favicon.ico" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+    <link href="/static/css/styles.css" rel="stylesheet" />
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+        <div class="container px-4 px-lg-5">
+            <a class="navbar-brand" href="/templates/index.html"><h5>QuerétaroDescubre</h5></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                Menu
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/post">Estadía</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/contact">Comentarios</a></li>
+                    {% if session.get('user_id') %}
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/logout">Cerrar sesión</a></li>
+                    {% else %}
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/login">Iniciar sesión</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/register">Registrarse</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <header class="masthead" style="background-image: url('../static/assets/img/about-bg.jpg')">
+        <div class="container position-relative px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <div class="page-heading">
+                        <h1>Actividades</h1>
+                        <span class="subheading">Encuentra un plan para ti!</span>
+                        <div class="subheading">Maravillate entre las diferentes opciones de nuestros destinos</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="mb-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <h2>¿Qué hacer en Querétaro?</h2>
+                    <p>Querétaro es un estado lleno de historia, cultura y naturaleza. Aquí encontrarás una gran variedad de actividades para disfrutar en compañía de tus seres queridos. Desde recorrer el Centro Histórico de la capital, hasta explorar la Sierra Gorda y sus maravillas naturales, hay algo para todos los gustos. A continuación te presentamos algunas de las actividades más populares que puedes realizar en Querétaro:</p>
+                    <ul>
+                        <li>Escalar la Peña de Bernal, el segundo monolito más grande del mundo.</li>
+                        <li>Relajarte en las Termas de San Joaquín y disfrutar de sus aguas termales.</li>
+                        <li>Explorar la Sierra Gorda de Querétaro y sus paisajes naturales.</li>
+                        <li>Conocer la Cascada el Chuveje y otras cascadas de la región.</li>
+                    </ul>
+                </div>
+                <div class="col-lg-4">
+                    <img class="img-fluid" src="/static/assets/actividades.png" alt="Actividades en Querétaro" />
+                </div>
+            </div>
+        </div>
+    </main>
+    <main class="mb-4">
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <select id="destino" name="destino" class="form-select">
+                        <option value="" disabled selected>Selecciona un destino</option>
+                        {% for destino in destinos %}
+                            <option value="{{ destino.id_destino }}">{{ destino.nombre_destino }}</option>
+                        {% endfor %}
+                    </select>
+                    <div id="actividades" class="mt-4">
+                        <!-- Aquí se mostrarán las actividades según el destino seleccionado -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="border-top">
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <ul class="list-inline text-center">
+                        <li class="list-inline-item">
+                            <a href="https://www.instagram.com/" target="_blank">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-instagram fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="https://www.facebook.com/" target="_blank">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-facebook-f fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="small text-center text-muted fst-italic">Copyright &copy; Guia Turistica</div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#destino').change(function() {
+                var id_destino = $(this).val();
+                $.ajax({
+                    url: '/get_activities/' + id_destino,
+                    method: 'GET',
+                    success: function(data) {
+                        var actividadesHtml = '<div class="card-deck">';
+                        $.each(data, function(index, actividad) {
+                            actividadesHtml += `
+                                <div class="card">
+                                    <img src="${actividad.image}" class="card-img-top" alt="${actividad.nombre_actividad}">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${actividad.nombre_actividad}</h5>
+                                        <p class="card-text">${actividad.descripcion}</p>
+                                        <p class="card-text"><small class="text-muted">Duración: ${actividad.duracion}</small></p>
+                                        <p class="card-text"><small class="text-muted">Costo: ${actividad.costos}</small></p>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        actividadesHtml += '</div>';
+                        $('#actividades').html(actividadesHtml);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

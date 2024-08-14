@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuerétaroDescubre</title>
+    <link rel="icon" type="image/x-icon" href="/static/assets/favicon.ico" />
+    <!-- Font Awesome icons (free version) -->
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+    <!-- Core theme CSS (includes Bootstrap) -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/styles.css" rel="stylesheet" />
+    <style>
+        .container h5 {
+            margin-bottom: 5px;
+            font-size: 20px;
+            color: #ffffff;
+            font-family: 'Pacifico', cursive;
+        }
+        .star {
+            font-size: 1.5rem;
+            color: #ddd;
+            cursor: pointer;
+        }
+        .star.checked,
+        .star.hover {
+            color: #f39c12;
+        }
+        #destinationImages img {
+            max-width: 500px;
+            margin-right: 10px;
+        }
+        .edit-comment {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            margin-top: 0.5rem;
+            cursor: pointer;
+        }
+        .edit-form {
+            display: none;
+            margin-top: 0.5rem;
+        }
+        .edit-text {
+            width: 100%;
+            height: 5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+        <div class="container px-4 px-lg-5">
+            <a class="navbar-brand" href="/template/index.html"><h5>QuerétaroDescubre</h5></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                Menu
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/about">Actividades</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/post">Estadía</a></li>
+                    {% if session.get('user_id') %}
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/logout">Cerrar sesión</a></li>
+                    {% else %}
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/login">Iniciar sesión</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/register">Registrarse</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('../static/assets/img/contact-bg.jpg')">
+        <div class="container position-relative px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <div class="page-heading">
+                        <h1>Comentarios y referencias</h1>
+                        <span class="subheading">Comparte tus experiencias con nuestros usuarios!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Main Content -->
+    <main class="mb-4">
+        <div class="container px-4 px-lg-5">
+            <!-- Barra de selección de destinos -->
+            <div class="row gx-4 gx-lg-5 justify-content-center mb-4">
+                <div class="col-md-6">
+                    <select id="destinationSelect" class="form-control">
+                        <option value="">¿Donde has estado?...</option>
+                    </select>
+                </div>
+            </div>
+            <!-- Información del destino seleccionado -->
+            <div id="destinationInfo" style="display: none;">
+                <h2 id="destinationTitle"></h2>
+                <div class="row">
+                    <div class="col-md-6" id="destinationImages"></div>
+                    <div class="col-md-6">
+                        <p id="destinationDescription"></p>
+                    </div>
+                </div>
+            </div>
+            <!-- Formulario de comentarios -->
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <p>¿Te ha gustado tu visita? Cuéntanos cómo ha sido tu experiencia, esto nos ayuda a mejorar nuestra guía.</p>
+                    <div class="my-5">
+                        <form id="commentForm">
+                            <div class="form-floating">
+                                <textarea class="form-control" id="comment" name="comment" placeholder="Escribe tu comentario..." style="height: 12rem"></textarea>
+                                <label for="comment">Escribe tu comentario...</label>
+                            </div>
+                            <br />
+                            <div class="form-floating">
+                                <p>Cómo disfrutaste tu visita</p>
+                                <div class="stars">
+                                    <span class="star" data-value="1">&#9733;</span>
+                                    <span class="star" data-value="2">&#9733;</span>
+                                    <span class="star" data-value="3">&#9733;</span>
+                                    <span class="star" data-value="4">&#9733;</span>
+                                    <span class="star" data-value="5">&#9733;</span>
+                                </div>
+                                <input type="hidden" id="rating" name="rating" />
+                                <label for="rating" class="d-none">Calificación (1-5)</label>
+                            </div>
+                            <br />
+                            <button class="btn btn-primary text-uppercase" id="submitCommentButton" type="submit">Enviar</button>
+                        </form>
+                        <div id="commentsContainer"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-top">
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <ul class="list-inline text-center">
+                        <li class="list-inline-item">
+                            <a href="#!">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="#!">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-facebook-f fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="#!">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="small text-center text-muted fst-italic">Copyright &copy; Your Website 2023</div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Bootstrap core JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS -->
+    <script src="/static/js/scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const destinationSelect = document.getElementById('destinationSelect');
+            const destinationInfo = document.getElementById('destinationInfo');
+            const destinationTitle = document.getElementById('destinationTitle');
+            const destinationImages = document.getElementById('destinationImages');
+            const destinationDescription = document.getElementById('destinationDescription');
+            const commentForm = document.getElementById('commentForm');
+            const stars = document.querySelectorAll('.star');
+            const ratingInput = document.getElementById('rating');
+            const commentsContainer = document.getElementById('commentsContainer');
+            let currentDestinationId = null;
+
+            fetch('/get_destinations')
+                .then(response => response.json())
+                .then(destinations => {
+                    destinations.forEach(destination => {
+                        const option = document.createElement('option');
+                        option.value = destination.id;
+                        option.textContent = destination.name;
+                        option.setAttribute('data-description', destination.description);
+                        option.setAttribute('data-image', destination.image);
+                        destinationSelect.appendChild(option);
+                    });
+                });
+
+            destinationSelect.addEventListener('change', function () {
+                const selectedId = destinationSelect.value;
+                if (selectedId) {
+                    const selectedOption = destinationSelect.options[destinationSelect.selectedIndex];
+                    destinationTitle.textContent = selectedOption.textContent;
+                    destinationDescription.textContent = selectedOption.getAttribute('data-description');
+
+                    // Clear previous images
+                    destinationImages.innerHTML = '';
+                    const img = document.createElement('img');
+                    img.src = `/static/assets/img/${selectedOption.getAttribute('data-image')}`;
+                    img.onerror = function() {
+                        this.src = '/static/assets/img/placeholder.jpg';
+                    };
+                    destinationImages.appendChild(img);
+
+                    destinationInfo.style.display = 'block';
+
+                    fetch(`/get_comments/${selectedId}`)
+                        .then(response => response.json())
+                        .then(comments => {
+                            commentsContainer.innerHTML = '';
+                            comments.forEach(comment => {
+                                const commentDiv = document.createElement('div');
+                                commentDiv.className = 'comment';
+                                commentDiv.innerHTML = `
+                                    <p><strong>${comment.user_name}</strong> (${comment.date})</p>
+                                    <p>${comment.comment}</p>
+                                    <button class="btn btn-secondary edit-comment" data-id="${comment.id_opinion}">Editar</button>
+                                    <div class="edit-form" id="edit-form-${comment.id_opinion}">
+                                        <textarea class="form-control edit-text">${comment.comment}</textarea>
+                                        <button class="btn btn-primary save-edit" data-id="${comment.id_opinion}">Guardar</button>
+                                    </div>
+                                `;
+                                commentsContainer.appendChild(commentDiv);
+                            });
+
+                            // Add edit functionality
+                            document.querySelectorAll('.edit-comment').forEach(button => {
+                                button.addEventListener('click', function () {
+                                    const commentId = this.getAttribute('data-id');
+                                    document.getElementById(`edit-form-${commentId}`).style.display = 'block';
+                                });
+                            });
+
+                            document.querySelectorAll('.save-edit').forEach(button => {
+                                button.addEventListener('click', function () {
+                                    const commentId = this.getAttribute('data-id');
+                                    const newCommentText = document.getElementById(`edit-form-${commentId}`).querySelector('.edit-text').value;
+                                    fetch('/edit_comment', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify({
+                                            id_opinion: commentId,
+                                            comment: newCommentText
+                                        })
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.status === 'success') {
+                                            alert('Comentario editado exitosamente');
+                                            destinationSelect.dispatchEvent(new Event('change'));  // Reload comments
+                                        } else {
+                                            alert('Error al editar el comentario');
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error:', error);
+                                        alert('Error al editar el comentario');
+                                    });
+                                });
+                            });
+                        });
+
+                } else {
+                    destinationInfo.style.display = 'none';
+                }
+            });
+
+            stars.forEach(star => {
+                star.addEventListener('click', function () {
+                    stars.forEach(s => s.classList.remove('checked'));
+                    this.classList.add('checked');
+                    ratingInput.value = this.getAttribute('data-value');
+
+                    let previousStar = this.previousElementSibling;
+                    while (previousStar) {
+                        previousStar.classList.add('checked');
+                        previousStar = previousStar.previousElementSibling;
+                    }
+                });
+
+                star.addEventListener('mouseover', function () {
+                    stars.forEach(s => s.classList.remove('hover'));
+                    this.classList.add('hover');
+
+                    let previousStar = this.previousElementSibling;
+                    while (previousStar) {
+                        previousStar.classList.add('hover');
+                        previousStar = previousStar.previousElementSibling;
+                    }
+                });
+
+                star.addEventListener('mouseout', function () {
+                    stars.forEach(s => s.classList.remove('hover'));
+                    this.classList.add('hover');
+
+                    let previousStar = this.previousElementSibling;
+                    while (previousStar) {
+                        previousStar.classList.add('hover');
+                        previousStar = previousStar.previousElementSibling;
+                    }
+                });
+                star.addEventListener('mouseout', function () {
+                    stars.forEach(s => s.classList.remove('hover'));
+                });
+            });
+
+            commentForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                const comment = document.getElementById('comment').value;
+                const rating = document.getElementById('rating').value;
+
+                const data = {
+                    id_destino: destinationSelect.value,
+                    comment: comment,
+                    rating: rating
+                };
+
+                fetch('/submit_comment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('Comentario enviado exitosamente');
+                        commentForm.reset();
+                        destinationSelect.dispatchEvent(new Event('change'));  // Reload comments
+                    } else {
+                        alert('Error al enviar el comentario');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al enviar el comentario');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

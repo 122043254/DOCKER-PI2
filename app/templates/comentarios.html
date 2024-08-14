@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendario Interactivo</title>
+<style>
+  #calendar {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 700px; /* Ajusta el ancho máximo del calendario */
+  }
+
+  .calendar-day {
+    flex: 1 0 14.28%; /* Ajusta el ancho de cada día para mostrar 7 días por fila */
+    max-width: 100px; /* Ancho máximo de cada día */
+    height: 80px; /* Altura de cada día */
+    border: 1px solid #ccc;
+    text-align: center;
+    line-height: 80px;
+    cursor: pointer;
+    box-sizing: border-box;
+  }
+
+  .calendar-day:hover {
+    background-color: #f0f0f0;
+  }
+</style>
+</head>
+<body>
+
+<div id="calendar"></div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const calendar = document.getElementById('calendar');
+
+    // Obtener el día actual
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth();
+
+    // Función para generar el calendario
+    function generateCalendar(year, month) {
+      calendar.innerHTML = '';
+
+      // Obtener el primer día del mes
+      const firstDay = new Date(year, month, 1);
+      const startingDay = firstDay.getDay();
+
+      // Obtener el último día del mes
+      const lastDay = new Date(year, month + 1, 0);
+      const numDays = lastDay.getDate();
+
+      // Generar los días del mes
+      for (let i = 0; i < startingDay; i++) {
+        const day = document.createElement('div');
+        day.classList.add('calendar-day');
+        calendar.appendChild(day);
+      }
+
+      for (let i = 1; i <= numDays; i++) {
+        const day = document.createElement('div');
+        day.classList.add('calendar-day');
+        day.textContent = i;
+        calendar.appendChild(day);
+
+        // Agregar evento clic para mostrar el día seleccionado
+        day.addEventListener('click', function() {
+          alert(`Seleccionaste el día ${i}/${month + 1}/${year}`);
+        });
+      }
+    }
+
+    // Generar el calendario del mes actual
+    generateCalendar(currentYear, currentMonth);
+  });
+</script>
+</body>
+</html>
+
